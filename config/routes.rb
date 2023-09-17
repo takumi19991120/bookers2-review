@@ -1,27 +1,15 @@
 Rails.application.routes.draw do
-  namespace :public do
-    get 'homes/about'
-    get 'homes/top'
-  end
-  namespace :public do
-    get 'books/index'
-    get 'books/show'
-    get 'books/edit'
-  end
-  namespace :public do
-    get 'users/index'
-    get 'users/show'
-    get 'users/edit'
-  end
-  devise_for :users
   
-    root :to =>"homes#top"
-  get "home/about"=>"homes#about"
-
-  resources :books, only: [:index,:show,:edit,:create,:destroy,:update]do
-   resources :book_comments, only: [:create, :destroy]  
-   resource :favorites, only: [:create, :destroy]
+  scope module: :public do
+    root to: "homes#top"
+    get "homes/about"=>"homes#about", as: "about"
+    resources :books, only: [:index,:show,:edit,:create,:destroy,:update]
+    resources :users, only: [:index,:show,:edit,:update]
   end
-  resources :users, only: [:index,:show,:edit,:update]
+  
+  devise_for :users,skip: [:passwords], controllers: {
+   registrations: "public/registrations",
+   sessions: 'public/sessions'
+  }
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
